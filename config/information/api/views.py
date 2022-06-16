@@ -82,10 +82,20 @@ class JournalPatch(APIView):
 
     def patch(self, request, pk):
 
-        journal = Journal.objects.filter(id = pk, teacher = request.user)
+        journal = Journal.objects.get(id = pk)
         serializer = JournalSerializer(journal, data=request.data)
 
-        if serializer.is_valid():
-            serializer.save()
+        if serializer.is_valid(raise_exception=True):
+            serializer.save(teacher = request.user)
 
             return  Response(serializer.data, status=status.HTTP_200_OK)
+
+class JournalFilterTeacher(APIView):
+    permission_classes = [IsTeacher]
+
+    def get(self, request):
+
+        journal = Journal.objects.filter(teacher = request.user)
+        serializer = JournalSerializer(journal, many=True)
+
+        return  Response(serializer.data, status=status.HTTP_200_OK)
