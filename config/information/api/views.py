@@ -89,6 +89,8 @@ class JournalPatch(APIView):
             serializer.save(teacher = request.user)
 
             return  Response(serializer.data, status=status.HTTP_200_OK)
+        else:
+            return  Response(serializer.data, status=status.HTTP_400_BAD_REQUEST)
 
 class JournalFilterTeacher(APIView):
     permission_classes = [IsTeacher]
